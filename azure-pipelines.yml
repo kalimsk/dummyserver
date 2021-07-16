@@ -21,3 +21,19 @@ steps:
     publishJUnitResults: false
     testResultsFiles: '**/TEST-*.xml'
     tasks: 'assemble'
+- task: CopyFiles@2
+  inputs:
+    SourceFolder: '$(Build.Repository.LocalPath)'
+    Contents: '*.jmx'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)'
+    CleanTargetFolder: true
+    OverWrite: true
+  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'jmeter'
+    publishLocation: 'Container'
+  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
